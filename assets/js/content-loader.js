@@ -1,8 +1,9 @@
 /*
 	Content loader
 	------------------------------------------------------------------
-	Reads files from folders in this repository through the GitHub API
-	and renders them into the page:
+	Reads files from folders in this repository and renders them into
+	the page, so content can be updated by editing/uploading files only
+	(no HTML changes needed).
 
 		content/左侧信息/    -> sidebar text + avatar image
 		content/个人信息/    -> profile text
@@ -13,8 +14,11 @@
 		.jpg .png .gif ...  rendered as an image
 		.mp4 .webm .mov ... rendered as a video
 
-	So content can be updated by editing/uploading files only,
-	without touching index.html.
+	How the file list is obtained:
+		1. GitHub contents API  (finds every file, but limited to
+		   60 requests/hour/IP for anonymous visitors)
+		2. On failure -> direct probing of common file names through
+		   raw.githubusercontent.com (no rate limit).
 */
 
 (function(window, document) {
@@ -27,6 +31,15 @@
 	var	TEXT_EXT = ['txt', 'md'],
 		IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'],
 		VIDEO_EXT = ['mp4', 'webm', 'ogg', 'ogv', 'mov', 'm4v'];
+
+	// Names tried when the GitHub API is unavailable (raw.githubusercontent.com, no rate limit).
+	var	CANDIDATES = [
+			'info.txt', 'intro.txt', 'content.txt', 'text.txt', 'index.txt',
+			'info.md', 'intro.md', 'readme.md',
+			'avatar.jpg', 'avatar.png', 'avatar.jpeg', 'avatar.webp', 'avatar.gif',
+			'photo.jpg', 'photo.png', 'image.jpg', 'image.png', 'cover.jpg', 'cover.png',
+			'video.mp4', 'video.webm', 'demo.mp4'
+		];
 
 	function extension(name) {
 		var i = name.lastIndexOf('.');
@@ -45,6 +58,15 @@
 
 	function byName(a, b) {
 		return (a.name < b.name ? -1 : (a.name > b.name ? 1 : 0));
+	}
+
+	function rawURL(path) {
+		return 'https://raw.githubusercontent.com/' + REPO + '/' + BRANCH + '/' +
+			path.split('/').map(encodeURIComponent).join('/');
+	}
+
+	function apiURL(path) {
+		return 'https://api.github.com/repos/' + REPO + '/contents/' + encodeURI(path) + '?ref=' + BRANCH;
 	}
 
 	// Bypass the browser/CDN cache so file edits show up right away.
@@ -84,21 +106,48 @@
 		});
 	}
 
-	// List the files of a folder (one API call, cached for 10 minutes).
+	// Fallback: ask raw.githubusercontent.com whether a known file name exists.
+	function probeFolder(path) {
+		return Promise.all(CANDIDATES.map(function(name) {
+			var url = rawURL(path + '/' + name);
+
+			return fetch(url, { method: 'HEAD' })
+				.then(function(r) {
+					return r.ok ? { name: name, type: 'file', download_url: url } : null;
+				})
+				.catch(function() {
+					return null;
+				});
+		})).then(function(list) {
+			return list.filter(function(x) { return !!x; });
+		});
+	}
+
+	// List the files of a folder (result cached for 10 minutes).
 	function listFolder(path) {
 		var cache = readCache();
 
-		if (cache[path])
+		if (cache[path] && cache[path].length)
 			return Promise.resolve(cache[path]);
 
-		return fetchJSON('https://api.github.com/repos/' + REPO + '/contents/' + encodeURI(path) + '?ref=' + BRANCH)
+		return fetchJSON(apiURL(path))
 			.then(function(items) {
 				if (!Array.isArray(items))
-					throw new Error('Not a folder: ' + path);
+					throw new Error('Not a folder');
 
-				var c = readCache();
-				c[path] = items;
-				writeCache(c);
+				return items;
+			})
+			.catch(function() {
+				return probeFolder(path);
+			})
+			.then(function(items) {
+				items = items || [];
+
+				if (items.length) {
+					var c = readCache();
+					c[path] = items;
+					writeCache(c);
+				}
 
 				return items;
 			});
@@ -141,6 +190,7 @@
 			var img = document.createElement('img');
 			img.src = bust(f.download_url);
 			img.alt = f.name.replace(/\.[^.]+$/, '');
+			img.style.maxWidth = '100%';
 			box.appendChild(img);
 		});
 
@@ -182,10 +232,10 @@
 	function load(options) {
 		return listFolder(options.folder).then(function(items) {
 			var files = items.filter(function(it) { return it.type === 'file'; }),
-				kind = function(k) { return files.filter(function(f) { return kindOf(f.name) === k; }).sort(byName); },
-				texts = kind('text'),
-				images = kind('image'),
-				videos = kind('video');
+				pick = function(k) { return files.filter(function(f) { return kindOf(f.name) === k; }).sort(byName); },
+				texts = pick('text'),
+				images = pick('image'),
+				videos = pick('video');
 
 			if (options.avatar && images.length)
 				swapImage(options.avatar, bust(images[0].download_url));
