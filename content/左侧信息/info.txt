@@ -4,5 +4,3 @@ RWTH Aachen University, Germany
 Master's student, Software System Engineering
 
 Focus: Human-Computer Interaction / Virtual Reality / Computer Graphics
-
-[即时更新测试] 这行是刚推送后立即出现的
