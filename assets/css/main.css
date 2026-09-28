@@ -3227,3 +3227,27 @@ input, select, textarea {
 			}
 
 	}
+
+/* Sidebar: show the whole green image, sized by its native ratio (bg.jpg is 1274 x 1400) */
+
+	@media screen and (min-width: 981px) {
+
+		#header {
+			background-color: #1f4841;
+			background-attachment: scroll, fixed;
+			background-position: top left, center center;
+			background-repeat: repeat, no-repeat;
+			background-size: auto, contain;
+			width: clamp(260px, calc(100vh * 0.91), 45vw);
+		}
+
+		body.is-touch #header {
+			background-size: auto, contain;
+		}
+
+		#main {
+			margin-left: clamp(260px, calc(100vh * 0.91), 45vw);
+			width: calc(100% - clamp(260px, calc(100vh * 0.91), 45vw));
+		}
+
+	}
