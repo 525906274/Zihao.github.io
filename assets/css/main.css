@@ -3260,3 +3260,20 @@ input, select, textarea {
 		}
 
 	}
+
+/* Dynamic content loaded from the content/* folders */
+
+	#sidebar-info:empty,
+	#profile-info:empty {
+		display: none;
+	}
+
+	#sidebar-info p {
+		font-size: 0.85em;
+		line-height: 1.6em;
+		margin: 0 0 0.8em 0;
+	}
+
+	#profile-info p {
+		margin: 0 0 1em 0;
+	}
