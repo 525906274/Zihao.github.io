@@ -3228,26 +3228,34 @@ input, select, textarea {
 
 	}
 
-/* Sidebar: show the whole green image, sized by its native ratio (bg.jpg is 1274 x 1400) */
+/* Sidebar: fixed, shows the image at 60% of its natural width (cropped sideways, full height) */
 
 	@media screen and (min-width: 981px) {
 
+		body {
+			overflow: hidden;
+		}
+
 		#header {
 			background-color: #1f4841;
-			background-attachment: scroll, fixed;
+			background-attachment: scroll, scroll;
 			background-position: top left, center center;
 			background-repeat: repeat, no-repeat;
-			background-size: auto, contain;
-			width: clamp(260px, calc(100vh * 0.91), 55vw);
+			background-size: auto, cover;
+			width: clamp(220px, calc(100vh * 0.546), 40vw);
 		}
 
 		body.is-touch #header {
-			background-size: auto, contain;
+			background-size: auto, cover;
 		}
 
 		#main {
-			margin-left: clamp(260px, calc(100vh * 0.91), 55vw);
-			width: calc(100% - clamp(260px, calc(100vh * 0.91), 55vw));
+			-webkit-overflow-scrolling: touch;
+			height: 100vh;
+			margin-left: clamp(220px, calc(100vh * 0.546), 40vw);
+			overflow-x: hidden;
+			overflow-y: auto;
+			width: calc(100% - clamp(220px, calc(100vh * 0.546), 40vw));
 		}
 
 	}
