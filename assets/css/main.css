@@ -3238,7 +3238,7 @@ input, select, textarea {
 			background-position: top left, center center;
 			background-repeat: repeat, no-repeat;
 			background-size: auto, contain;
-			width: clamp(260px, calc(100vh * 0.91), 45vw);
+			width: clamp(260px, calc(100vh * 0.91), 55vw);
 		}
 
 		body.is-touch #header {
@@ -3246,8 +3246,8 @@ input, select, textarea {
 		}
 
 		#main {
-			margin-left: clamp(260px, calc(100vh * 0.91), 45vw);
-			width: calc(100% - clamp(260px, calc(100vh * 0.91), 45vw));
+			margin-left: clamp(260px, calc(100vh * 0.91), 55vw);
+			width: calc(100% - clamp(260px, calc(100vh * 0.91), 55vw));
 		}
 
 	}
