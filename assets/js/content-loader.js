@@ -286,8 +286,7 @@
 
 		load({
 			folder: 'content/个人信息',
-			target: '#profile-info',
-			hide: '#profile-fallback'
+			target: '#profile-info'
 		}).catch(function(e) {
 			console.warn('[content] 个人信息 not loaded:', e.message);
 		});
