@@ -277,7 +277,7 @@
 	window.addEventListener('DOMContentLoaded', function() {
 
 		load({
-			folder: '左侧信息',
+			folder: 'content/左侧信息',
 			target: '#sidebar-info',
 			avatar: '#header .image.avatar img'
 		}).catch(function(e) {
@@ -285,7 +285,7 @@
 		});
 
 		load({
-			folder: '个人信息',
+			folder: 'content/个人信息',
 			target: '#profile-info',
 			hide: '#profile-fallback'
 		}).catch(function(e) {
