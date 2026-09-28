@@ -2643,6 +2643,14 @@ input, select, textarea {
 			width: 6.25em;
 		}
 
+/* Header background: keep the green image covering the whole sidebar */
+
+	#header {
+		background-attachment: scroll, fixed;
+		background-position: top left, center center;
+		background-size: auto, cover;
+	}
+
 /* Footer */
 
 	#footer .icons {

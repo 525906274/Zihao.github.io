@@ -1118,6 +1118,14 @@ $size-header-pad: 4em;
 		}
 	}
 
+/* Header background: keep the green image covering the whole sidebar */
+
+	#header {
+		background-attachment: scroll, fixed;
+		background-position: top left, center center;
+		background-size: auto, cover;
+	}
+
 /* Footer */
 
 	#footer {
