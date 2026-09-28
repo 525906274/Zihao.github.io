@@ -3263,6 +3263,10 @@ input, select, textarea {
 
 /* Dynamic content loaded from the content/* folders */
 
+	[hidden] {
+		display: none !important;
+	}
+
 	#sidebar-info:empty,
 	#profile-info:empty {
 		display: none;

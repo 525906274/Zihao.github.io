@@ -1640,6 +1640,12 @@ $size-header-pad: 4em;
 
 	}
 
+/* Dynamic content loaded from the content/* folders */
+
+	[hidden] {
+		display: none !important;
+	}
+
 /* Sidebar: fixed, shows the image at 60% of its natural width (cropped sideways, full height) */
 
 @media screen and (min-width: 981px) {
